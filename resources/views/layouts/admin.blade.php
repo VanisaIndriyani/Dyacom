@@ -31,14 +31,25 @@
 </head>
 <body class="h-screen overflow-hidden bg-slate-50 text-slate-800">
     @php
-        $lowStockCount = \App\Models\Product::query()
-            ->whereColumn('stock', '<=', 'min_stock')
-            ->count();
+        $lowStockCount = 0;
+        $unreadNotifications = 0;
 
-        $unreadNotifications = \App\Models\AppNotification::query()
-            ->where('user_id', auth()->id())
-            ->whereNull('read_at')
-            ->count();
+        if (auth()->user()->role === 'owner') {
+            $unreadNotifications = \App\Models\AppNotification::query()
+                ->where('user_id', auth()->id())
+                ->where('type', 'restock_request')
+                ->whereNull('read_at')
+                ->count();
+        } else {
+            $lowStockCount = \App\Models\Product::query()
+                ->whereColumn('stock', '<=', 'min_stock')
+                ->count();
+
+            $unreadNotifications = \App\Models\AppNotification::query()
+                ->where('user_id', auth()->id())
+                ->whereNull('read_at')
+                ->count();
+        }
 
         $notificationBadgeCount = $unreadNotifications + $lowStockCount;
     @endphp
@@ -188,6 +199,12 @@
                 @if (session('success'))
                     <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                         {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+                        {{ session('error') }}
                     </div>
                 @endif
 

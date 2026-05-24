@@ -12,18 +12,32 @@ class NotificationController extends Controller
     {
         $q = trim((string) $request->query('q', ''));
 
-        $lowStockQuery = Product::query()->whereColumn('stock', '<=', 'min_stock');
-        $lowStockCount = (clone $lowStockQuery)->count();
-        $lowStockProducts = $lowStockQuery
-            ->orderBy('stock')
-            ->orderBy('name')
-            ->limit(20)
-            ->get();
+        $lowStockCount = 0;
+        $lowStockProducts = collect();
 
-        $notifications = AppNotification::query()
-            ->where(function ($q) use ($request) {
+        if ($request->user()->role !== 'owner') {
+            $lowStockQuery = Product::query()->whereColumn('stock', '<=', 'min_stock');
+            $lowStockCount = (clone $lowStockQuery)->count();
+            $lowStockProducts = $lowStockQuery
+                ->orderBy('stock')
+                ->orderBy('name')
+                ->limit(20)
+                ->get();
+        }
+
+        $notificationsQuery = AppNotification::query();
+
+        if ($request->user()->role === 'owner') {
+            $notificationsQuery
+                ->where('user_id', $request->user()->id)
+                ->where('type', 'restock_request');
+        } else {
+            $notificationsQuery->where(function ($q) use ($request) {
                 $q->whereNull('user_id')->orWhere('user_id', $request->user()->id);
-            })
+            });
+        }
+
+        $notifications = $notificationsQuery
             ->when($q !== '', function ($query) use ($q) {
                 $like = '%'.$q.'%';
                 $query->where(function ($q2) use ($like) {
@@ -42,7 +56,7 @@ class NotificationController extends Controller
     public function markRead(Request $request, AppNotification $notification)
     {
         if ($notification->user_id !== null && $notification->user_id !== $request->user()->id) {
-            abort(403);
+            return redirect()->route('notifications.index')->with('error', 'Anda tidak memiliki akses ke notifikasi ini.');
         }
 
         $notification->update(['read_at' => now()]);

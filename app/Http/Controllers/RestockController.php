@@ -41,7 +41,7 @@ class RestockController extends Controller
     public function create()
     {
         if (request()->user()->role !== 'employee') {
-            abort(403);
+            return redirect()->route('restock.index')->with('error', 'Hanya karyawan yang dapat mengajukan restok.');
         }
 
         $products = Product::query()
@@ -56,7 +56,7 @@ class RestockController extends Controller
     public function store(Request $request)
     {
         if ($request->user()->role !== 'employee') {
-            abort(403);
+            return redirect()->route('restock.index')->with('error', 'Hanya karyawan yang dapat mengajukan restok.');
         }
 
         $data = $request->validate([
@@ -121,7 +121,7 @@ class RestockController extends Controller
         $restock->load(['product', 'requester', 'decider']);
 
         if ($request->user()->role === 'employee' && $restock->requested_by !== $request->user()->id) {
-            abort(403);
+            return redirect()->route('restock.index')->with('error', 'Anda tidak memiliki akses ke pengajuan ini.');
         }
 
         return view('restock.show', compact('restock'));
@@ -130,7 +130,7 @@ class RestockController extends Controller
     public function approve(Request $request, RestockRequest $restock)
     {
         if ($request->user()->role !== 'owner') {
-            abort(403);
+            return redirect()->route('restock.index')->with('error', 'Hanya pemilik toko yang dapat memproses pengajuan.');
         }
 
         if ($restock->status !== 'pending') {
@@ -173,7 +173,7 @@ class RestockController extends Controller
     public function reject(Request $request, RestockRequest $restock)
     {
         if ($request->user()->role !== 'owner') {
-            abort(403);
+            return redirect()->route('restock.index')->with('error', 'Hanya pemilik toko yang dapat memproses pengajuan.');
         }
 
         if ($restock->status !== 'pending') {
