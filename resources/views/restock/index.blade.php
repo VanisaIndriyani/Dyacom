@@ -29,18 +29,17 @@
                             <th class="px-5 py-3 text-left font-semibold">Keterangan</th>
                         @else
                             <th class="px-5 py-3 text-left font-semibold">Tanggal</th>
-                            <th class="px-5 py-3 text-left font-semibold">Produk</th>
-                            <th class="px-5 py-3 text-left font-semibold">Qty</th>
-                            <th class="px-5 py-3 text-left font-semibold">Status</th>
                             <th class="px-5 py-3 text-left font-semibold">Pemohon</th>
+                            <th class="px-5 py-3 text-left font-semibold">Item</th>
+                            <th class="px-5 py-3 text-left font-semibold">Status</th>
                             <th class="px-5 py-3 text-right font-semibold">Aksi</th>
                         @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @forelse ($requests as $r)
-                        <tr class="hover:bg-slate-50">
-                            @if(auth()->user()->role !== 'owner')
+                    @if(auth()->user()->role !== 'owner')
+                        @forelse ($requests as $r)
+                            <tr class="hover:bg-slate-50">
                                 <td class="px-5 py-3 font-semibold text-slate-900">{{ str_pad((string) $r->id, 5, '0', STR_PAD_LEFT) }}</td>
                                 <td class="px-5 py-3 text-slate-700">{{ $r->created_at->format('d M Y') }}</td>
                                 <td class="px-5 py-3">
@@ -64,67 +63,59 @@
                                         Ditolak
                                     @endif
                                 </td>
-                            @else
-                                <td class="px-5 py-3 text-slate-700">{{ $r->created_at->format('d/m/Y H:i') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-5 py-10 text-center text-slate-500">Belum ada pengajuan restok.</td>
+                            </tr>
+                        @endforelse
+                    @else
+                        @forelse ($batches as $b)
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-5 py-3 text-slate-700">{{ \Illuminate\Support\Carbon::createFromFormat('Y-m-d H:i:s', $b->batch_time)->format('d/m/Y H:i') }}</td>
                                 <td class="px-5 py-3">
-                                    <div class="font-semibold text-slate-900">{{ $r->product?->name ?? '-' }}</div>
-                                    <a href="{{ route('restock.show', $r) }}" class="mt-1 inline-block text-xs font-semibold text-primary-700 hover:text-primary-800">detail</a>
+                                    <div class="font-semibold text-slate-900">{{ $b->requester_name }}</div>
+                                    <div class="mt-1 text-xs text-slate-500">ID: {{ $b->requested_by }}</div>
                                 </td>
-                                <td class="px-5 py-3 font-semibold text-slate-900">{{ $r->quantity }}</td>
-                                <td class="px-5 py-3">
-                                    @if ($r->status === 'pending')
-                                        <span class="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">Pending</span>
-                                    @elseif ($r->status === 'approved')
-                                        <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Disetujui</span>
-                                    @else
-                                        <span class="inline-flex rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">Ditolak</span>
+                                <td class="px-5 py-3 text-slate-700">
+                                    <span class="font-semibold text-slate-900">{{ $b->total_items }}</span> item
+                                    @if((int) $b->pending_items > 0)
+                                        <span class="ml-2 inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">{{ $b->pending_items }} pending</span>
                                     @endif
                                 </td>
-                                <td class="px-5 py-3 text-slate-700">{{ $r->requester?->name ?? '-' }}</td>
+                                <td class="px-5 py-3">
+                                    @if ((int) $b->pending_items > 0)
+                                        <span class="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">Perlu diproses</span>
+                                    @elseif ((int) $b->rejected_items > 0 && (int) $b->approved_items > 0)
+                                        <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">Campuran</span>
+                                    @elseif ((int) $b->rejected_items > 0)
+                                        <span class="inline-flex rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">Ditolak</span>
+                                    @else
+                                        <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Disetujui</span>
+                                    @endif
+                                </td>
                                 <td class="px-5 py-3">
                                     <div class="flex items-center justify-end gap-2">
-                                        @if($r->status === 'pending')
-                                            <form method="POST" action="{{ route('restock.approve', $r) }}" onsubmit="return confirm('Setujui pengajuan ini?')">
-                                                @csrf
-                                                <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700">
-                                                    Setujui
-                                                </button>
-                                            </form>
-                                            <form method="POST" action="{{ route('restock.reject', $r) }}" onsubmit="return confirm('Tolak pengajuan ini?')">
-                                                @csrf
-                                                <button type="submit" class="rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-700">
-                                                    Tolak
-                                                </button>
-                                            </form>
-                                        @else
-                                            <span class="text-xs text-slate-500">-</span>
-                                        @endif
+                                        <a href="{{ route('restock.show', $b->first_id) }}" class="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                                            Lihat
+                                        </a>
+                                        <a href="{{ route('restock.show', $b->first_id) }}?mode=edit" class="rounded-xl bg-primary-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-700">
+                                            Edit
+                                        </a>
                                     </div>
                                 </td>
-                            @endif
-                        </tr>
-                        @if (auth()->user()->role === 'owner' && ($r->note || $r->decision_note))
-                            <tr class="bg-slate-50/60">
-                                <td colspan="6" class="px-5 py-3 text-xs text-slate-600">
-                                    @if($r->note)
-                                        <div><span class="font-semibold">Catatan pemohon:</span> {{ $r->note }}</div>
-                                    @endif
-                                    @if($r->decision_note)
-                                        <div class="mt-1"><span class="font-semibold">Catatan keputusan:</span> {{ $r->decision_note }}</div>
-                                    @endif
-                                </td>
                             </tr>
-                        @endif
-                    @empty
-                        <tr>
-                            <td colspan="{{ auth()->user()->role !== 'owner' ? 5 : 6 }}" class="px-5 py-10 text-center text-slate-500">Belum ada pengajuan restok.</td>
-                        </tr>
-                    @endforelse
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-5 py-10 text-center text-slate-500">Belum ada pengajuan restok.</td>
+                            </tr>
+                        @endforelse
+                    @endif
                 </tbody>
             </table>
         </div>
         <div class="border-t border-slate-200 px-5 py-4">
-            {{ $requests->links() }}
+            {{ auth()->user()->role === 'owner' ? $batches->links() : $requests->links() }}
         </div>
     </div>
 @endsection

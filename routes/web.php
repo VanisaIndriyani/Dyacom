@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/restock/create', [RestockController::class, 'create'])->name('restock.create');
     Route::post('/restock', [RestockController::class, 'store'])->name('restock.store');
     Route::get('/restock/{restock}', [RestockController::class, 'show'])->name('restock.show');
+    Route::post('/restock/bulk-decide', [RestockController::class, 'bulkDecide'])->name('restock.bulkDecide');
+    Route::post('/restock/bulk-note', [RestockController::class, 'bulkUpdateDecisionNote'])->name('restock.bulkNoteUpdate');
     Route::post('/restock/{restock}/approve', [RestockController::class, 'approve'])->name('restock.approve');
     Route::post('/restock/{restock}/reject', [RestockController::class, 'reject'])->name('restock.reject');
 
