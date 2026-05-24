@@ -90,11 +90,6 @@
                                 <button type="submit" class="w-full rounded-md bg-primary-400 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100">
                                     Masuk
                                 </button>
-
-                                <div class="pt-2 text-center text-xs text-slate-500">
-                                    Belum punya akun?
-                                    <a href="#" onclick="return false" class="font-semibold text-primary-600 hover:text-primary-700">Daftar</a>
-                                </div>
                             </form>
                         </div>
                     </div>
