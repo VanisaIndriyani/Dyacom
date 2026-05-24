@@ -5,7 +5,7 @@
 @section('content')
     <div class="min-h-screen bg-slate-100">
         <div class="grid min-h-screen grid-cols-1 lg:grid-cols-2">
-            <div class="relative hidden overflow-hidden bg-primary-400 lg:block">
+            <div class="relative hidden overflow-hidden bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 lg:block">
                 <div class="absolute -left-24 top-16 h-64 w-64 rounded-full bg-white/20"></div>
                 <div class="absolute left-10 top-24 h-40 w-40 rounded-full bg-white/10"></div>
                 <div class="absolute bottom-16 left-16 h-24 w-24 rounded-2xl bg-white/15"></div>
@@ -13,19 +13,8 @@
 
                 <div class="relative flex h-full items-center px-16">
                     <div class="max-w-lg text-white">
-                        <div class="inline-flex items-center gap-3 rounded-xl bg-white/15 px-4 py-2 text-sm font-semibold shadow-sm ring-1 ring-white/20">
-                            PERCETAKAN DYACOM
-                        </div>
-                        <div class="mt-3 inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/15">
-                            Manajemen Persediaan Produk
-                        </div>
-
-                        <div class="mt-6 text-4xl font-extrabold leading-tight drop-shadow-sm">
-                            Sistem Manajemen Stok Modern
-                        </div>
-                        <div class="mt-3 text-sm text-white/90">
-                            Mudah, cepat, dan terpercaya untuk kebutuhan persediaan produk percetakan.
-                        </div>
+                        <div class="text-5xl font-extrabold leading-tight tracking-tight drop-shadow-sm">Percetakan Dyacom</div>
+                        <div class="mt-2 text-lg font-semibold text-white/85">Manajemen Persediaan</div>
                     </div>
                 </div>
             </div>
@@ -87,7 +76,7 @@
                                     Ingat saya
                                 </label>
 
-                                <button type="submit" class="w-full rounded-md bg-primary-400 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100">
+                                <button type="submit" class="w-full rounded-md bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-100">
                                     Masuk
                                 </button>
                             </form>

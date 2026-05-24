@@ -29,7 +29,7 @@
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="h-screen overflow-hidden bg-slate-50 text-slate-800">
+<body class="min-h-[100dvh] overflow-hidden bg-slate-50 text-slate-800">
     @php
         $lowStockCount = 0;
         $unreadNotifications = 0;
@@ -54,7 +54,7 @@
         $notificationBadgeCount = $unreadNotifications + $lowStockCount;
     @endphp
 
-    <div class="relative h-screen">
+    <div class="relative min-h-[100dvh]">
         <div class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden" x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false"></div>
 
         <aside class="fixed inset-y-0 left-0 z-50 w-72 -translate-x-full bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 shadow-lg ring-1 ring-primary-900/30 transition-transform lg:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
@@ -74,7 +74,7 @@
                 </button>
             </div>
 
-            <nav class="h-[calc(100vh-4rem)] flex flex-col">
+            <nav class="h-[calc(100dvh-4rem)] flex flex-col">
                 <div class="flex-1 overflow-y-auto px-3 py-4">
                     <div class="space-y-1">
                     <a href="{{ route('dashboard') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('dashboard') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
@@ -158,7 +158,7 @@
             </nav>
         </aside>
 
-        <div class="flex h-screen flex-col lg:pl-72">
+        <div class="flex min-h-[100dvh] flex-col lg:pl-72">
             <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
                 <div class="flex h-16 items-center justify-between px-4 lg:px-8">
                     <div class="flex items-center gap-3">
