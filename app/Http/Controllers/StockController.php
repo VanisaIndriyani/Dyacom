@@ -23,7 +23,7 @@ class StockController extends Controller
                 $query->where(function ($q2) use ($like) {
                     $q2->where('type', 'like', $like)
                         ->orWhere('note', 'like', $like)
-                        ->orWhereHas('product', fn ($qp) => $qp->where('name', 'like', $like)->orWhere('sku', 'like', $like))
+                        ->orWhereHas('product', fn ($qp) => $qp->where('name', 'like', $like))
                         ->orWhereHas('supplier', fn ($qs) => $qs->where('name', 'like', $like))
                         ->orWhereHas('user', fn ($qu) => $qu->where('name', 'like', $like)->orWhere('email', 'like', $like));
                 });
@@ -93,7 +93,7 @@ class StockController extends Controller
 
         $link = route('products.edit', $product);
         $title = 'Stok menipis: '.$product->name;
-        $body = 'SKU: '.$product->sku.' | Stok: '.$product->stock.' | Minimum: '.$product->min_stock;
+        $body = 'Stok: '.$product->stock.' | Minimum: '.$product->min_stock;
 
         $owners = User::query()->where('role', 'owner')->get();
 

@@ -11,10 +11,6 @@
         <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-medium text-slate-700">SKU</label>
-                    <input name="sku" value="{{ old('sku') }}" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="PRD-001">
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-slate-700">Nama Produk</label>
                     <input name="name" value="{{ old('name') }}" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100">
                 </div>
@@ -34,11 +30,15 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-slate-700">Stok Awal</label>
+                    <input name="stock" type="number" min="0" value="{{ old('stock', 0) }}" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100">
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-slate-700">Minimum Stok</label>
                     <input name="min_stock" type="number" min="0" value="{{ old('min_stock', 0) }}" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700">Harga</label>
+                    <label class="block text-sm font-medium text-slate-700">Harga Jual</label>
                     <input name="price" type="number" min="0" step="0.01" value="{{ old('price', 0) }}" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100">
                 </div>
 
@@ -59,4 +59,3 @@
         </div>
     </form>
 @endsection
-

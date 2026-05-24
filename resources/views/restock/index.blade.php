@@ -1,17 +1,19 @@
 @extends('layouts.admin')
 
-@section('title', 'Pengajuan Restok - ' . config('app.name'))
-@section('pageTitle', 'Pengajuan Restok')
-@section('pageSubtitle', 'Ajukan restok dan proses persetujuan')
+@section('title', (auth()->user()->role === 'owner' ? 'Persetujuan Restok' : 'Pengajuan Restok') . ' - ' . config('app.name'))
+@section('pageTitle', auth()->user()->role === 'owner' ? 'Restok (Persetujuan)' : 'Pengajuan Restok')
+@section('pageSubtitle', auth()->user()->role === 'owner' ? 'Tinjau pengajuan restok dari karyawan' : 'Ajukan restok dan pantau status')
 
 @section('content')
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="text-sm text-slate-600">
             Total: <span class="font-semibold text-slate-900">{{ $requests->total() }}</span>
         </div>
-        <a href="{{ route('restock.create') }}" class="inline-flex items-center justify-center rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
-            Ajukan Restok
-        </a>
+        @if(auth()->user()->role !== 'owner')
+            <a href="{{ route('restock.create') }}" class="inline-flex items-center justify-center rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
+                Ajukan Restok
+            </a>
+        @endif
     </div>
 
     <div class="mt-4 overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
@@ -33,7 +35,6 @@
                             <td class="px-5 py-3 text-slate-700">{{ $r->created_at->format('d/m/Y H:i') }}</td>
                             <td class="px-5 py-3">
                                 <div class="font-semibold text-slate-900">{{ $r->product?->name ?? '-' }}</div>
-                                <div class="text-xs text-slate-500">SKU: {{ $r->product?->sku ?? '-' }}</div>
                             </td>
                             <td class="px-5 py-3 font-semibold text-slate-900">{{ $r->quantity }}</td>
                             <td class="px-5 py-3">
@@ -49,14 +50,18 @@
                             <td class="px-5 py-3">
                                 <div class="flex items-center justify-end gap-2">
                                     @if(auth()->user()->role === 'owner' && $r->status === 'pending')
-                                        <form method="POST" action="{{ route('restock.approve', $r) }}" onsubmit="return confirm('Setujui pengajuan ini?')">
+                                        <input id="note-{{ $r->id }}" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100 sm:w-56 sm:py-1.5" placeholder="Catatan (opsional)">
+
+                                        <form method="POST" action="{{ route('restock.approve', $r) }}" onsubmit="this.decision_note.value = (document.getElementById('note-{{ $r->id }}')?.value || ''); return confirm('Setujui pengajuan ini?')">
                                             @csrf
+                                            <input type="hidden" name="decision_note" value="">
                                             <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700">
                                                 Setujui
                                             </button>
                                         </form>
-                                        <form method="POST" action="{{ route('restock.reject', $r) }}" onsubmit="return confirm('Tolak pengajuan ini?')">
+                                        <form method="POST" action="{{ route('restock.reject', $r) }}" onsubmit="this.decision_note.value = (document.getElementById('note-{{ $r->id }}')?.value || ''); return confirm('Tolak pengajuan ini?')">
                                             @csrf
+                                            <input type="hidden" name="decision_note" value="">
                                             <button type="submit" class="rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-700">
                                                 Tolak
                                             </button>
@@ -92,4 +97,3 @@
         </div>
     </div>
 @endsection
-

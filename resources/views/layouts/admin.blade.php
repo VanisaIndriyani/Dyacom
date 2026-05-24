@@ -76,29 +76,30 @@
                             <span class="flex-1">Data Akun</span>
                         </a>
                     @endif
+                    @if(auth()->user()->role !== 'owner')
+                        <a href="{{ route('products.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('products.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M4 3a2 2 0 00-2 2v2a1 1 0 001 1h14a1 1 0 001-1V5a2 2 0 00-2-2H4z" />
+                                <path fill-rule="evenodd" d="M18 9H2v6a2 2 0 002 2h12a2 2 0 002-2V9z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="flex-1">Data Produk</span>
+                        </a>
 
-                    <a href="{{ route('products.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('products.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M4 3a2 2 0 00-2 2v2a1 1 0 001 1h14a1 1 0 001-1V5a2 2 0 00-2-2H4z" />
-                            <path fill-rule="evenodd" d="M18 9H2v6a2 2 0 002 2h12a2 2 0 002-2V9z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="flex-1">Data Produk</span>
-                    </a>
-
-                    <a href="{{ route('stock.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('stock.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M2 11a1 1 0 011-1h5a1 1 0 010 2H3a1 1 0 01-1-1z" />
-                            <path d="M12 7a1 1 0 011-1h5a1 1 0 110 2h-5a1 1 0 01-1-1z" />
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v6a1 1 0 102 0V7z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="flex-1">Catat Stok</span>
-                    </a>
+                        <a href="{{ route('stock.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('stock.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2 11a1 1 0 011-1h5a1 1 0 010 2H3a1 1 0 01-1-1z" />
+                                <path d="M12 7a1 1 0 011-1h5a1 1 0 110 2h-5a1 1 0 01-1-1z" />
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v6a1 1 0 102 0V7z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="flex-1">Catat Stok</span>
+                        </a>
+                    @endif
 
                     <a href="{{ route('restock.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('restock.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4H6a1 1 0 100 2h3v3a1 1 0 102 0v-3h3a1 1 0 100-2h-3V6z" clip-rule="evenodd" />
                         </svg>
-                        <span class="flex-1">Pengajuan Restok</span>
+                        <span class="flex-1">{{ auth()->user()->role === 'owner' ? 'Restok (Persetujuan)' : 'Pengajuan Restok' }}</span>
                     </a>
 
                     <a href="{{ route('suppliers.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('suppliers.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
@@ -109,16 +110,18 @@
                         <span class="flex-1">Data Supplier</span>
                     </a>
 
-                    <a href="{{ route('notifications.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('notifications.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6z" />
-                            <path d="M10 18a3 3 0 01-2.83-2h5.66A3 3 0 0110 18z" />
-                        </svg>
-                        <span class="flex-1">Notifikasi</span>
-                        @if ($unreadNotifications > 0)
-                            <span class="inline-flex min-w-6 justify-center rounded-full bg-primary-600 px-2 py-0.5 text-[11px] font-bold text-white">{{ $unreadNotifications }}</span>
-                        @endif
-                    </a>
+                    @if(auth()->user()->role !== 'owner')
+                        <a href="{{ route('notifications.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('notifications.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6z" />
+                                <path d="M10 18a3 3 0 01-2.83-2h5.66A3 3 0 0110 18z" />
+                            </svg>
+                            <span class="flex-1">Notifikasi</span>
+                            @if ($unreadNotifications > 0)
+                                <span class="inline-flex min-w-6 justify-center rounded-full bg-primary-600 px-2 py-0.5 text-[11px] font-bold text-white">{{ $unreadNotifications }}</span>
+                            @endif
+                        </a>
+                    @endif
                     </div>
                 </div>
                 <div class="border-t border-white/10 px-3 py-4">

@@ -11,7 +11,7 @@
         </div>
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
             <form method="GET" action="{{ route('products.index') }}" class="w-full sm:w-80">
-                <input name="q" value="{{ request('q') }}" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="Cari nama / SKU / supplier...">
+                <input name="q" value="{{ request('q') }}" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="Cari nama / supplier...">
             </form>
             <a href="{{ route('products.create') }}" class="inline-flex items-center justify-center rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
                 Tambah Produk
@@ -39,7 +39,6 @@
                             </td>
                             <td class="px-5 py-3">
                                 <div class="font-semibold text-slate-900">{{ $product->name }}</div>
-                                <div class="text-xs text-slate-500">SKU: {{ $product->sku }}</div>
                             </td>
                             <td class="px-5 py-3 text-slate-700">
                                 {{ $product->supplier?->name ?? '-' }}

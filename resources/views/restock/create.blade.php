@@ -16,7 +16,7 @@
                         <option value="">Pilih produk</option>
                         @foreach ($products as $product)
                             <option value="{{ $product->id }}" @selected(old('product_id') == $product->id)>
-                                {{ $product->name }} (SKU: {{ $product->sku }}) - Stok: {{ $product->stock }}
+                                {{ $product->name }} - Stok: {{ $product->stock }}
                             </option>
                         @endforeach
                     </select>
@@ -44,4 +44,3 @@
         </div>
     </form>
 @endsection
-

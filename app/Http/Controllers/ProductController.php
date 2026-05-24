@@ -23,7 +23,6 @@ class ProductController extends Controller
                 $like = '%'.$q.'%';
                 $query->where(function ($q2) use ($like) {
                     $q2->where('products.name', 'like', $like)
-                        ->orWhere('products.sku', 'like', $like)
                         ->orWhereHas('supplier', fn ($qs) => $qs->where('name', 'like', $like));
                 });
             })
@@ -51,15 +50,15 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku'],
             'name' => ['required', 'string', 'max:255'],
             'unit' => ['nullable', 'string', 'max:50'],
+            'stock' => ['nullable', 'integer', 'min:0'],
             'min_stock' => ['required', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
         ]);
 
-        $data['stock'] = 0;
+        $data['stock'] = (int) ($data['stock'] ?? 0);
 
         $product = Product::create($data);
         $this->createLowStockNotificationsIfNeeded($product);
@@ -92,7 +91,6 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku,'.$product->id],
             'name' => ['required', 'string', 'max:255'],
             'unit' => ['nullable', 'string', 'max:50'],
             'min_stock' => ['required', 'integer', 'min:0'],
@@ -124,7 +122,7 @@ class ProductController extends Controller
 
         $link = route('products.edit', $product);
         $title = 'Stok menipis: '.$product->name;
-        $body = 'SKU: '.$product->sku.' | Stok: '.$product->stock.' | Minimum: '.$product->min_stock;
+        $body = 'Stok: '.$product->stock.' | Minimum: '.$product->min_stock;
 
         $owners = User::query()->where('role', 'owner')->get();
 

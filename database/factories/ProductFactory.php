@@ -18,11 +18,8 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $skuNumber = str_pad((string) fake()->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT);
-
         return [
             'supplier_id' => null,
-            'sku' => 'PRD-'.$skuNumber,
             'name' => Str::title(fake()->words(fake()->numberBetween(2, 4), true)),
             'unit' => fake()->randomElement(['pcs', 'rim', 'box', 'pack']),
             'stock' => fake()->numberBetween(0, 120),

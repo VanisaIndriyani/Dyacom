@@ -28,7 +28,7 @@ class RestockController extends Controller
             $like = '%'.$q.'%';
             $query->where(function ($q2) use ($like) {
                 $q2->where('status', 'like', $like)
-                    ->orWhereHas('product', fn ($qp) => $qp->where('name', 'like', $like)->orWhere('sku', 'like', $like))
+                    ->orWhereHas('product', fn ($qp) => $qp->where('name', 'like', $like))
                     ->orWhereHas('requester', fn ($qu) => $qu->where('name', 'like', $like)->orWhere('email', 'like', $like));
             });
         }

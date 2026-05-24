@@ -35,7 +35,6 @@
                             </td>
                             <td class="px-5 py-3">
                                 <div class="font-semibold text-slate-900">{{ $m->product?->name ?? '-' }}</div>
-                                <div class="text-xs text-slate-500">SKU: {{ $m->product?->sku ?? '-' }}</div>
                             </td>
                             <td class="px-5 py-3">
                                 @if ($m->type === 'in')
@@ -66,4 +65,3 @@
         </div>
     </div>
 @endsection
-
