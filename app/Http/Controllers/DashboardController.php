@@ -87,11 +87,7 @@ class DashboardController extends Controller
             ->whereColumn('stock', '<=', 'min_stock')
             ->orderBy('stock')
             ->limit(5)
-            ->get(['name', 'stock', 'min_stock']);
-
-        $lowStockLabels = $lowStockProducts->pluck('name');
-        $lowStockStock = $lowStockProducts->pluck('stock');
-        $lowStockMin = $lowStockProducts->pluck('min_stock');
+            ->get(['name', 'unit', 'stock', 'min_stock']);
 
         $latestNotifications = AppNotification::query()
             ->where(function ($q) {
@@ -114,9 +110,7 @@ class DashboardController extends Controller
             'inData',
             'outData',
             'restockChart',
-            'lowStockLabels',
-            'lowStockStock',
-            'lowStockMin',
+            'lowStockProducts',
             'latestNotifications',
         ));
     }

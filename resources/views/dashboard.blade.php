@@ -70,10 +70,32 @@
 
     <div class="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
         <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200 xl:col-span-2">
-            <div class="text-sm font-semibold text-slate-900">Produk Stok Menipis (Top 5)</div>
-            <div class="text-xs text-slate-500">Perbandingan stok saat ini vs minimum stok</div>
-            <div class="mt-4 h-64">
-                <canvas id="lowStockChart" class="h-full w-full"></canvas>
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <div class="text-sm font-semibold text-slate-900">Stok Menipis</div>
+                    <div class="text-xs text-slate-500">Top 5 produk dengan jumlah terendah</div>
+                </div>
+                <a href="{{ route('products.index') }}" class="text-xs font-semibold text-primary-700 hover:text-primary-800">
+                    Lihat semua
+                </a>
+            </div>
+
+            <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+                @forelse($lowStockProducts as $p)
+                    <div class="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-4 py-3 last:border-b-0">
+                        <div class="min-w-0">
+                            <div class="text-sm font-semibold text-slate-900">{{ $p->name }}</div>
+                            <div class="mt-1 text-xs text-slate-500">Min: {{ $p->min_stock }}</div>
+                        </div>
+                        <span class="shrink-0 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                            Sisa {{ $p->stock }}{{ $p->unit ? ' '.$p->unit : '' }}
+                        </span>
+                    </div>
+                @empty
+                    <div class="bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                        Semua produk aman.
+                    </div>
+                @endforelse
             </div>
         </div>
 
@@ -178,9 +200,6 @@
         const inData = @json($inData);
         const outData = @json($outData);
         const restockChart = @json($restockChart);
-        const lowStockLabels = @json($lowStockLabels);
-        const lowStockStock = @json($lowStockStock);
-        const lowStockMin = @json($lowStockMin);
 
         const textColor = '#334155';
         const gridColor = 'rgba(148, 163, 184, 0.25)';
@@ -240,38 +259,6 @@
                     legend: { position: 'bottom', labels: { color: textColor } },
                 },
                 cutout: '68%',
-            },
-        });
-
-        new Chart(document.getElementById('lowStockChart'), {
-            type: 'bar',
-            data: {
-                labels: lowStockLabels,
-                datasets: [
-                    {
-                        label: 'Stok',
-                        data: lowStockStock,
-                        backgroundColor: 'rgba(225, 29, 72, 0.75)',
-                        borderRadius: 8,
-                    },
-                    {
-                        label: 'Minimum',
-                        data: lowStockMin,
-                        backgroundColor: 'rgba(37, 99, 235, 0.45)',
-                        borderRadius: 8,
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { color: textColor } },
-                },
-                scales: {
-                    x: { ticks: { color: textColor }, grid: { display: false } },
-                    y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true },
-                },
             },
         });
     </script>

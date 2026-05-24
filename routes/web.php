@@ -26,7 +26,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 
     Route::resource('products', ProductController::class);
-    Route::resource('suppliers', SupplierController::class);
 
     Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
     Route::get('/stock/create', [StockController::class, 'create'])->name('stock.create');
@@ -44,5 +43,6 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:owner')->group(function () {
         Route::resource('users', UserController::class);
+        Route::resource('suppliers', SupplierController::class);
     });
 });

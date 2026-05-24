@@ -31,10 +31,16 @@
 </head>
 <body class="h-screen overflow-hidden bg-slate-50 text-slate-800">
     @php
+        $lowStockCount = \App\Models\Product::query()
+            ->whereColumn('stock', '<=', 'min_stock')
+            ->count();
+
         $unreadNotifications = \App\Models\AppNotification::query()
             ->where('user_id', auth()->id())
             ->whereNull('read_at')
             ->count();
+
+        $notificationBadgeCount = $unreadNotifications + $lowStockCount;
     @endphp
 
     <div class="relative h-screen">
@@ -102,13 +108,15 @@
                         <span class="flex-1">{{ auth()->user()->role === 'owner' ? 'Restok (Persetujuan)' : 'Pengajuan Restok' }}</span>
                     </a>
 
-                    <a href="{{ route('suppliers.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('suppliers.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M8 2a1 1 0 00-1 1v1H5a2 2 0 00-2 2v2h14V6a2 2 0 00-2-2h-2V3a1 1 0 00-1-1H8z" />
-                            <path d="M3 10v6a2 2 0 002 2h10a2 2 0 002-2v-6H3z" />
-                        </svg>
-                        <span class="flex-1">Data Supplier</span>
-                    </a>
+                    @if(auth()->user()->role === 'owner')
+                        <a href="{{ route('suppliers.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('suppliers.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M8 2a1 1 0 00-1 1v1H5a2 2 0 00-2 2v2h14V6a2 2 0 00-2-2h-2V3a1 1 0 00-1-1H8z" />
+                                <path d="M3 10v6a2 2 0 002 2h10a2 2 0 002-2v-6H3z" />
+                            </svg>
+                            <span class="flex-1">Data Supplier</span>
+                        </a>
+                    @endif
 
                     @if(auth()->user()->role !== 'owner')
                         <a href="{{ route('notifications.index') }}" class="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition {{ request()->routeIs('notifications.*') ? 'bg-white/15 text-white ring-1 ring-white/15' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
@@ -117,8 +125,8 @@
                                 <path d="M10 18a3 3 0 01-2.83-2h5.66A3 3 0 0110 18z" />
                             </svg>
                             <span class="flex-1">Notifikasi</span>
-                            @if ($unreadNotifications > 0)
-                                <span class="inline-flex min-w-6 justify-center rounded-full bg-primary-600 px-2 py-0.5 text-[11px] font-bold text-white">{{ $unreadNotifications }}</span>
+                            @if ($notificationBadgeCount > 0)
+                                <span class="inline-flex min-w-6 justify-center rounded-full bg-primary-600 px-2 py-0.5 text-[11px] font-bold text-white">{{ $notificationBadgeCount }}</span>
                             @endif
                         </a>
                     @endif
@@ -161,8 +169,8 @@
                                 <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6z" />
                                 <path d="M10 18a3 3 0 01-2.83-2h5.66A3 3 0 0110 18z" />
                             </svg>
-                            @if ($unreadNotifications > 0)
-                                <span class="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary-600 px-1 text-[10px] font-bold text-white">{{ $unreadNotifications }}</span>
+                        @if ($notificationBadgeCount > 0)
+                            <span class="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary-600 px-1 text-[10px] font-bold text-white">{{ $notificationBadgeCount }}</span>
                             @endif
                         </a>
                         <div class="hidden sm:block text-right leading-tight">

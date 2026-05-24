@@ -23,6 +23,7 @@ class ProductController extends Controller
                 $like = '%'.$q.'%';
                 $query->where(function ($q2) use ($like) {
                     $q2->where('products.name', 'like', $like)
+                        ->orWhere('products.category', 'like', $like)
                         ->orWhereHas('supplier', fn ($qs) => $qs->where('name', 'like', $like));
                 });
             })
@@ -51,6 +52,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
             'name' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', 'max:100'],
             'unit' => ['nullable', 'string', 'max:50'],
             'stock' => ['nullable', 'integer', 'min:0'],
             'min_stock' => ['required', 'integer', 'min:0'],
@@ -92,6 +94,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
             'name' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', 'max:100'],
             'unit' => ['nullable', 'string', 'max:50'],
             'min_stock' => ['required', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],

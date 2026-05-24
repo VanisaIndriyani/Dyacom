@@ -17,6 +17,11 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-slate-700">Kategori</label>
+                    <input name="category" value="{{ old('category', $product->category) }}" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100">
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-slate-700">Supplier (opsional)</label>
                     <select name="supplier_id" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100">
                         <option value="">-</option>

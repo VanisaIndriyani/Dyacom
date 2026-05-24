@@ -11,7 +11,7 @@
         </div>
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
             <form method="GET" action="{{ route('products.index') }}" class="w-full sm:w-80">
-                <input name="q" value="{{ request('q') }}" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="Cari nama / supplier...">
+                <input name="q" value="{{ request('q') }}" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="Cari nama / kategori / supplier...">
             </form>
             <a href="{{ route('products.create') }}" class="inline-flex items-center justify-center rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
                 Tambah Produk
@@ -26,8 +26,11 @@
                     <tr>
                         <th class="px-5 py-3 text-left font-semibold">No</th>
                         <th class="px-5 py-3 text-left font-semibold">Produk</th>
+                        <th class="px-5 py-3 text-left font-semibold">Kategori</th>
+                        <th class="px-5 py-3 text-left font-semibold">Harga</th>
+                        <th class="px-5 py-3 text-left font-semibold">Status</th>
                         <th class="px-5 py-3 text-left font-semibold">Supplier</th>
-                        <th class="px-5 py-3 text-left font-semibold">Stok</th>
+                        <th class="px-5 py-3 text-left font-semibold">Jumlah</th>
                         <th class="px-5 py-3 text-right font-semibold">Aksi</th>
                     </tr>
                 </thead>
@@ -39,6 +42,20 @@
                             </td>
                             <td class="px-5 py-3">
                                 <div class="font-semibold text-slate-900">{{ $product->name }}</div>
+                                <div class="text-xs text-slate-500">{{ $product->unit ?: '-' }}</div>
+                            </td>
+                            <td class="px-5 py-3 text-slate-700">
+                                {{ $product->category ?? '-' }}
+                            </td>
+                            <td class="px-5 py-3 text-slate-700">
+                                Rp {{ number_format((float) $product->price, 0, ',', '.') }}
+                            </td>
+                            <td class="px-5 py-3">
+                                @if($product->is_low_stock)
+                                    <span class="inline-flex rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">Menipis</span>
+                                @else
+                                    <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Tersedia</span>
+                                @endif
                             </td>
                             <td class="px-5 py-3 text-slate-700">
                                 {{ $product->supplier?->name ?? '-' }}
@@ -46,7 +63,7 @@
                             <td class="px-5 py-3">
                                 <div class="inline-flex items-center gap-2">
                                     <span class="font-semibold {{ $product->is_low_stock ? 'text-rose-700' : 'text-slate-900' }}">
-                                        {{ $product->stock }}
+                                        {{ $product->stock }}{{ $product->unit ? ' '.$product->unit : '' }}
                                     </span>
                                     <span class="text-xs text-slate-500">min {{ $product->min_stock }}</span>
                                 </div>
@@ -68,7 +85,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-10 text-center text-slate-500">Belum ada data produk.</td>
+                            <td colspan="8" class="px-5 py-10 text-center text-slate-500">Belum ada data produk.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppNotification;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -10,6 +11,14 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q', ''));
+
+        $lowStockQuery = Product::query()->whereColumn('stock', '<=', 'min_stock');
+        $lowStockCount = (clone $lowStockQuery)->count();
+        $lowStockProducts = $lowStockQuery
+            ->orderBy('stock')
+            ->orderBy('name')
+            ->limit(20)
+            ->get();
 
         $notifications = AppNotification::query()
             ->where(function ($q) use ($request) {
@@ -27,7 +36,7 @@ class NotificationController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('notifications.index', compact('notifications'));
+        return view('notifications.index', compact('notifications', 'lowStockCount', 'lowStockProducts'));
     }
 
     public function markRead(Request $request, AppNotification $notification)
