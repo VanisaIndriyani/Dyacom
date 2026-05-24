@@ -7,7 +7,7 @@
 @section('content')
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="text-sm text-slate-600">
-            Total: <span class="font-semibold text-slate-900">{{ $requests->total() }}</span>
+            Total: <span class="font-semibold text-slate-900">{{ auth()->user()->role === 'owner' ? $batches->total() : $requests->total() }}</span>
         </div>
         @if(auth()->user()->role !== 'owner')
             <a href="{{ route('restock.create') }}" class="inline-flex items-center justify-center rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
