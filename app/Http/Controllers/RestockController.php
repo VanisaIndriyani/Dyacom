@@ -40,43 +40,91 @@ class RestockController extends Controller
 
     public function create()
     {
-        $products = Product::query()->orderBy('name')->get();
+        if (request()->user()->role !== 'employee') {
+            abort(403);
+        }
+
+        $products = Product::query()
+            ->whereColumn('stock', '<=', 'min_stock')
+            ->orderBy('stock')
+            ->orderBy('name')
+            ->get(['id', 'name', 'unit', 'stock', 'min_stock']);
 
         return view('restock.create', compact('products'));
     }
 
     public function store(Request $request)
     {
+        if ($request->user()->role !== 'employee') {
+            abort(403);
+        }
+
         $data = $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
-            'quantity' => ['required', 'integer', 'min:1'],
-            'note' => ['nullable', 'string'],
+            'products' => ['required', 'array', 'min:1'],
+            'products.*' => ['integer', 'exists:products,id'],
+            'quantities' => ['required', 'array'],
         ]);
 
-        $restock = RestockRequest::create([
-            'product_id' => $data['product_id'],
-            'quantity' => $data['quantity'],
-            'note' => $data['note'] ?? null,
-            'status' => 'pending',
-            'requested_by' => $request->user()->id,
-        ]);
+        $selectedProducts = array_values(array_unique(array_map('intval', $data['products'])));
+        $quantities = $data['quantities'] ?? [];
 
-        $product = $restock->product()->first();
+        $errors = [];
+        foreach ($selectedProducts as $productId) {
+            $qty = (int) ($quantities[$productId] ?? 0);
+            if ($qty < 1) {
+                $errors['quantities.'.$productId] = 'Jumlah restok wajib diisi.';
+            }
+        }
+        if ($errors) {
+            return back()->withErrors($errors)->withInput();
+        }
+
+        $created = [];
+        DB::transaction(function () use ($request, $selectedProducts, $quantities, &$created) {
+            foreach ($selectedProducts as $productId) {
+                $created[] = RestockRequest::create([
+                    'product_id' => $productId,
+                    'quantity' => (int) $quantities[$productId],
+                    'note' => null,
+                    'status' => 'pending',
+                    'requested_by' => $request->user()->id,
+                ]);
+            }
+        });
+
+        $products = Product::query()->whereIn('id', $selectedProducts)->get(['id', 'name']);
+        $names = $products->pluck('name')->values()->all();
+
+        $title = 'Pengajuan restok baru';
+        $body = count($names) > 1
+            ? implode(', ', array_slice($names, 0, 3)).(count($names) > 3 ? '...' : '').' | Total item: '.count($names)
+            : (($names[0] ?? 'Produk').' | Total item: 1');
+
         $link = route('restock.index');
-
         $owners = User::query()->where('role', 'owner')->get();
 
         foreach ($owners as $owner) {
             AppNotification::create([
                 'user_id' => $owner->id,
                 'type' => 'restock_request',
-                'title' => 'Pengajuan restok baru',
-                'body' => ($product ? $product->name : 'Produk').' | Qty: '.$restock->quantity,
+                'title' => $title,
+                'body' => $body,
                 'link' => $link,
             ]);
         }
 
         return redirect()->route('restock.index')->with('success', 'Pengajuan restok berhasil dikirim.');
+    }
+
+    public function show(Request $request, RestockRequest $restock)
+    {
+        $restock->load(['product', 'requester', 'decider']);
+
+        if ($request->user()->role === 'employee' && $restock->requested_by !== $request->user()->id) {
+            abort(403);
+        }
+
+        return view('restock.show', compact('restock'));
     }
 
     public function approve(Request $request, RestockRequest $restock)
@@ -89,16 +137,12 @@ class RestockController extends Controller
             return redirect()->route('restock.index')->with('success', 'Pengajuan sudah diproses.');
         }
 
-        $data = $request->validate([
-            'decision_note' => ['nullable', 'string'],
-        ]);
-
-        DB::transaction(function () use ($request, $restock, $data) {
+        DB::transaction(function () use ($request, $restock) {
             $restock->update([
                 'status' => 'approved',
                 'decided_by' => $request->user()->id,
                 'decided_at' => now(),
-                'decision_note' => $data['decision_note'] ?? null,
+                'decision_note' => null,
             ]);
 
             $product = Product::query()->lockForUpdate()->findOrFail($restock->product_id);
@@ -111,7 +155,7 @@ class RestockController extends Controller
                 'restock_request_id' => $restock->id,
                 'type' => 'in',
                 'quantity' => $restock->quantity,
-                'note' => 'Restok disetujui'.(($data['decision_note'] ?? null) ? ' - '.$data['decision_note'] : ''),
+                'note' => 'Restok disetujui',
             ]);
 
             AppNotification::create([
@@ -136,15 +180,11 @@ class RestockController extends Controller
             return redirect()->route('restock.index')->with('success', 'Pengajuan sudah diproses.');
         }
 
-        $data = $request->validate([
-            'decision_note' => ['nullable', 'string'],
-        ]);
-
         $restock->update([
             'status' => 'rejected',
             'decided_by' => $request->user()->id,
             'decided_at' => now(),
-            'decision_note' => $data['decision_note'] ?? null,
+            'decision_note' => null,
         ]);
 
         $product = $restock->product()->first();
@@ -153,7 +193,7 @@ class RestockController extends Controller
             'user_id' => $restock->requested_by,
             'type' => 'restock_status',
             'title' => 'Pengajuan restok ditolak',
-            'body' => ($product ? $product->name : 'Produk').' | Qty: '.$restock->quantity.((($data['decision_note'] ?? null)) ? ' | Catatan: '.$data['decision_note'] : ''),
+            'body' => ($product ? $product->name : 'Produk').' | Qty: '.$restock->quantity,
             'link' => route('restock.index'),
         ]);
 
