@@ -3,55 +3,49 @@
 @section('title', 'Login - ' . config('app.name'))
 
 @section('content')
-    <div class="relative min-h-screen overflow-hidden">
-        <div class="pointer-events-none absolute -top-24 left-1/2 h-72 w-[48rem] -translate-x-1/2 rounded-full bg-primary-200/70 blur-3xl"></div>
-        <div class="pointer-events-none absolute -bottom-24 left-1/4 h-72 w-[48rem] -translate-x-1/2 rounded-full bg-primary-100 blur-3xl"></div>
+    <div class="min-h-screen bg-slate-100">
+        <div class="grid min-h-screen grid-cols-1 lg:grid-cols-2">
+            <div class="relative hidden overflow-hidden bg-primary-400 lg:block">
+                <div class="absolute -left-24 top-16 h-64 w-64 rounded-full bg-white/20"></div>
+                <div class="absolute left-10 top-24 h-40 w-40 rounded-full bg-white/10"></div>
+                <div class="absolute bottom-16 left-16 h-24 w-24 rounded-2xl bg-white/15"></div>
+                <div class="absolute bottom-10 right-16 h-20 w-20 rounded-2xl bg-white/10"></div>
 
-        <div class="mx-auto grid min-h-screen max-w-6xl grid-cols-1 items-center gap-8 px-4 py-10 lg:grid-cols-2">
-            <div class="relative hidden lg:block">
-                <div class="rounded-3xl bg-gradient-to-br from-primary-800 to-primary-600 p-10 text-white shadow-sm">
-                    <div class="inline-flex items-center gap-3">
-                        <div class="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 text-xl font-bold">D</div>
-                        <div>
-                            <div class="text-sm font-semibold opacity-90">Percetakan Dyacom</div>
-                            <div class="text-xs opacity-80">Manajemen Persediaan Produk</div>
+                <div class="relative flex h-full items-center px-16">
+                    <div class="max-w-lg text-white">
+                        <div class="inline-flex items-center gap-3 rounded-xl bg-white/15 px-4 py-2 text-sm font-semibold shadow-sm ring-1 ring-white/20">
+                            PERCETAKAN DYACOM
                         </div>
-                    </div>
-
-                    <div class="mt-8 text-2xl font-semibold leading-snug">
-                        SISTEM INFORMASI MANAJEMEN PERSEDIAAN PRODUK BERBASIS WEB
-                    </div>
-                    <div class="mt-3 text-sm opacity-90">
-                        Desain modern, rapi, responsif, dan mudah digunakan.
-                    </div>
-
-                    <div class="mt-8 grid grid-cols-2 gap-3 text-sm">
-                        <div class="rounded-2xl bg-white/10 p-4">
-                            <div class="font-semibold">Pemilik Toko</div>
-                            <div class="mt-1 text-xs opacity-90">Kelola akun, persetujuan restok, dan pantau stok menipis.</div>
+                        <div class="mt-3 inline-flex items-center rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/15">
+                            Manajemen Persediaan Produk
                         </div>
-                        <div class="rounded-2xl bg-white/10 p-4">
-                            <div class="font-semibold">Karyawan</div>
-                            <div class="mt-1 text-xs opacity-90">Catat stok masuk/keluar dan ajukan restok produk.</div>
+
+                        <div class="mt-6 text-4xl font-extrabold leading-tight drop-shadow-sm">
+                            Sistem Manajemen Stok Modern
+                        </div>
+                        <div class="mt-3 text-sm text-white/90">
+                            Mudah, cepat, dan terpercaya untuk kebutuhan persediaan produk percetakan.
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full">
-                <div class="mx-auto w-full max-w-md">
-                    <div class="rounded-3xl bg-white/90 shadow-sm ring-1 ring-slate-200 backdrop-blur overflow-hidden">
-                        <div class="px-6 py-6 border-b border-slate-200">
-                            <div class="flex items-center gap-3">
-                                <div class="grid h-11 w-11 place-items-center rounded-2xl bg-primary-600 text-white font-bold">D</div>
-                                <div>
-                                    <div class="text-sm font-semibold text-slate-900">Login</div>
-                                    <div class="text-xs text-slate-500">Masuk untuk melanjutkan</div>
-                                </div>
-                            </div>
+            <div class="relative flex items-center justify-center px-4 py-10">
+                <div class="w-full max-w-md">
+                    <div class="mb-6 text-center lg:hidden">
+                        <div class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white">
+                            Percetakan Dyacom
+                        </div>
+                        <div class="mt-2 text-xs text-slate-600">Manajemen Persediaan Produk</div>
+                    </div>
+
+                    <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+                        <div class="px-6 py-6 text-center">
+                            <div class="text-lg font-bold text-slate-900">Selamat Datang</div>
+                            <div class="mt-1 text-xs text-slate-500">Silakan masuk ke akun Anda</div>
                         </div>
 
-                        <div class="px-6 py-6">
+                        <div class="px-6 pb-6">
                             @if ($errors->any())
                                 <div class="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
                                     <div class="font-semibold">Terjadi kesalahan:</div>
@@ -67,15 +61,15 @@
                                 @csrf
 
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700">Email</label>
-                                    <input name="email" type="email" value="{{ old('email') }}" required autofocus class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="contoh@dyacom.test">
+                                    <label class="block text-xs font-semibold text-slate-700">Email atau Username</label>
+                                    <input name="email" type="email" value="{{ old('email') }}" required autofocus class="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="contoh@dyacom.test">
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700">Password</label>
+                                    <label class="block text-xs font-semibold text-slate-700">Password</label>
                                     <div class="relative mt-1">
-                                        <input id="login_password" name="password" type="password" required class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-11 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="••••••••">
-                                        <button type="button" data-password-toggle="login_password" class="absolute inset-y-0 right-2 grid w-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700" aria-label="Tampilkan password">
+                                        <input id="login_password" name="password" type="password" required class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 pr-11 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100" placeholder="••••••••">
+                                        <button type="button" data-password-toggle="login_password" class="absolute inset-y-0 right-0 grid w-10 place-items-center text-slate-500 hover:text-slate-700" aria-label="Tampilkan password">
                                             <svg data-eye-open xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path d="M10 3c-5 0-9 4-9 7s4 7 9 7 9-4 9-7-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" />
                                                 <path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />
@@ -88,23 +82,20 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-center justify-between">
-                                    <label class="inline-flex items-center gap-2 text-sm text-slate-600">
-                                        <input type="checkbox" name="remember" class="rounded border-slate-300 text-primary-600 focus:ring-primary-200">
-                                        Ingat saya
-                                    </label>
-                                </div>
+                                <label class="inline-flex items-center gap-2 text-xs text-slate-600">
+                                    <input type="checkbox" name="remember" class="rounded border-slate-300 text-primary-600 focus:ring-primary-200">
+                                    Ingat saya
+                                </label>
 
-                                <button type="submit" class="w-full rounded-xl bg-primary-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-200">
-                                    Login
+                                <button type="submit" class="w-full rounded-md bg-primary-400 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100">
+                                    Masuk
                                 </button>
-                            </form>
 
-                            <div class="mt-6 rounded-2xl bg-slate-50 px-4 py-3 text-xs text-slate-600">
-                                <div class="font-semibold text-slate-700">Akun demo (Seeder)</div>
-                                <div class="mt-1">Pemilik: pemilik@dyacom.test / password</div>
-                                <div>Karyawan: karyawan@dyacom.test / password</div>
-                            </div>
+                                <div class="pt-2 text-center text-xs text-slate-500">
+                                    Belum punya akun?
+                                    <a href="#" onclick="return false" class="font-semibold text-primary-600 hover:text-primary-700">Daftar</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
 
